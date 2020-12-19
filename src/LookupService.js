@@ -7,7 +7,6 @@ const LookupService = {
     },
     getGenre: function(genre) {
         const response = axios(`${apiUrl}&page=1&page_size=20&genres=${genre}`);
-        console.log(response)
         return response
     },
 }
