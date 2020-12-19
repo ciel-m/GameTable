@@ -4,7 +4,7 @@ const ParsingService = {
         value.forEach(function (value) {
             res.push(value.name)
         })
-        return res.toString()
+        return res
     },
     getESRB: function(value) {
         return value.name

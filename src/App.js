@@ -3,9 +3,26 @@ import axios from 'axios';
 import "./App.css";
 import Table from "./Table";
 import ParsingService from "./ParsingService"
+import qs from 'query-string';
+import LookupService from "./LookupService";
 
 function App() {
   const [data, setData] = useState([]);
+  const [filter, setFilter] = useState("");
+
+  const Genres = ({ values }) => {
+    return (
+      <>
+        {values.map((genre, idx) => {
+          return (
+            <span key={idx} className="badge">
+              {genre}
+            </span>
+          );
+        })}
+      </>
+    );
+  };
 
   const columns = useMemo(
     () => [
@@ -19,7 +36,8 @@ function App() {
           {
             Header: "Genres",
             accessor: "genres",
-            Cell: ({ cell: { value } }) =>  value ? ParsingService.getGenres(value) : "Not Listed"
+            Cell: ({ cell: { value } }) => <Genres values={ParsingService.getGenres(value)} />,
+            filterMethod: () => { return false }
           },
           {
             Header: "Release Date",
@@ -42,14 +60,30 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      const response = await axios(`https://api.rawg.io/api/games?key=${process.env.REACT_APP_API_KEY}&page=1&page_size=20`);
-      console.log(response.data.results)
+      const response = await LookupService.getData();
       setData(response.data.results)
     })();
   }, []);
 
+  async function changeGenre(genre) {
+    const response = await LookupService.getGenre(genre)
+    setData(response.data.results)
+  }
+
   return (
     <div className="App">
+      <input
+        type="text"
+        value={filter}
+        placeholder="Enter genre"
+        onChange={event => setFilter(event.target.value)}
+      />
+      <button  onClick={() => {changeGenre(filter)}}>
+        Search
+      </button>
+      <button  onClick={() => {setData([])}}>
+        Reset
+      </button>
       <Table columns={columns} data={data} />
     </div>
   );

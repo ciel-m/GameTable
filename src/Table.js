@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTable, useFilters, useSortBy, usePagination } from "react-table";
+import LookupService from "./LookupService";
 
 export default function Table({ columns, data }) {
   const [filterInput, setFilterInput] = useState("");
@@ -30,7 +31,6 @@ export default function Table({ columns, data }) {
     useSortBy,
     usePagination
   );
-
   // const setPageSize = function(value) {
   //   console.log('test')
   //   let currentUrlParams = new URLSearchParams(window.location.search);
@@ -38,19 +38,20 @@ export default function Table({ columns, data }) {
   //   this.props.history.push(window.location.pathname + "?" + currentUrlParams.toString());
   // };
 
-  const handleFilterChange = e => {
-    const value = e.target.value || undefined;
-    setFilter("genre", value);
-    setFilterInput(value);
-  };
+
+  function handleFilterChange() {
+    console.log("a")
+    setFilter("name", filterInput);
+    setFilterInput(filterInput);
+  }
+
+  function reset() {
+    // setFilter("name", "")
+    // setFilterInput("")
+  }
 
   return (
     <>
-      <input
-        value={filterInput}
-        onChange={handleFilterChange}
-        placeholder={"Search name"}
-      />
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
